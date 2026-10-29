@@ -1,7 +1,7 @@
 (function(){
 'use strict';
 var DEFAULTS={currency:'IDR',modalAwal:1000000,riskPct:1,dayPct:3,weekPct:6,ddPct:15,maxPosPct:40,maxOpen:2,maxTrades:3,maxStreak:3,feeBuy:0.2,feeSell:0.2,tax:0.21,minRR:2,
-  futCapPct:30,futMarginPct:50,maxLev:5,mmr:0.5,futFee:0.06,futTax:0};
+  futCapPct:30,futMarginPct:50,maxLev:5,mmr:0.5,futFee:0.06,futTax:0,liveOn:1,bnb:0,makerOrder:0};
 var LIQ_MULT=2;
 var LS_BK='jurnal-kripto-1r.lastBackup',LS_KEY='jurnal-kripto-1r.v1',LS_KURS='jurnal-kripto-1r.kurs',LS_LANG='jurnal-kripto-1r.lang';
 
@@ -66,7 +66,7 @@ tbl_fut_h:'Futures: nilai posisi, leverage, dan margin',tbl_fut_n:'Leverage di t
 set_sum:'Pengaturan modal, batas & biaya',set_cur:'Mata uang akun',set_modal:'Modal awal ({c})',set_risk:'Risiko per trade (%)',set_minrr:'R:R minimal (1:x)',set_day:'Batas rugi harian (%)',set_week:'Batas rugi mingguan (%)',set_dd:'Batas drawdown (%)',set_maxopen:'Maks posisi terbuka',set_maxtrades:'Maks trade per hari',set_streak:'Stop setelah loss beruntun',set_maxpos:'Maks nilai 1 posisi (%)',set_feebuy:'Biaya beli (%)',set_feesell:'Biaya jual (%)',set_tax:'Pajak saat jual (%)',set_futcap:'Porsi modal futures (%)',set_futmargin:'Margin maks 1 posisi (% modal futures)',set_maxlev:'Leverage maks (x)',set_mmr:'Maintenance margin (%)',set_futfee:'Biaya futures per sisi (%)',set_futtax:'Pajak futures (%)',
 set_note:'Biaya spot dan futures berbeda di tiap exchange. Cek tabel biayanya (maker biasanya lebih murah dari taker). Biaya futures dihitung dari nilai posisi, bukan dari margin. Pajak futures isi 0 kalau exchange-mu tidak memungutnya; pajak spot di exchange berizin dalam negeri 0,21%.',
 set_save:'Simpan pengaturan',set_reset:'Kembalikan batas bawaan',csv:'Ekspor jurnal ke CSV',store_db:'Data tersimpan di akun Claude-mu, jadi jurnal yang sama terbuka dari HP atau laptop mana pun.',store_local:'Data tersimpan di HP ini dan tetap bisa dipakai tanpa internet. Simpan cadangan secara rutin, misalnya tiap akhir pekan, supaya data aman kalau HP rusak atau aplikasi terhapus.',
-install:'Pasang aplikasi',backup_export:'Simpan cadangan',backup_import:'Pulihkan dari cadangan',imp_h:'Pulihkan dari cadangan?',imp_d:'Cadangan ini berisi {n} trade dengan modal awal {m}, dibuat {d}. Semua data di HP ini sekarang akan diganti.',imp_yes:'Ganti data',ts_imp:'Data dipulihkan dari cadangan.',ts_imp_bad:'File ini bukan cadangan Jurnal Kripto 1R.',ts_backup:'Cadangan siap disimpan.',bk_never:'Belum ada cadangan. Jurnalmu hanya tersimpan di HP ini.',bk_old:'Cadangan terakhir {n} hari lalu. Simpan yang baru supaya trade terbaru ikut aman.',bk_now:'Simpan cadangan sekarang',ce_date:'Tanggal keluar tidak boleh sebelum tanggal masuk.',ts_update:'Versi baru terpasang. Tutup lalu buka lagi aplikasi untuk memakainya.',store_check:'Memeriksa penyimpanan…',
+install:'Pasang aplikasi',backup_export:'Simpan cadangan',backup_import:'Pulihkan dari cadangan',imp_h:'Pulihkan dari cadangan?',imp_d:'Cadangan ini berisi {n} trade dengan modal awal {m}, dibuat {d}. Semua data di HP ini sekarang akan diganti.',imp_yes:'Ganti data',ts_imp:'Data dipulihkan dari cadangan.',ts_imp_bad:'File ini bukan cadangan Jurnal Kripto 1R.',ts_backup:'Cadangan siap disimpan.',bk_never:'Belum ada cadangan. Jurnalmu hanya tersimpan di HP ini.',bk_old:'Cadangan terakhir {n} hari lalu. Simpan yang baru supaya trade terbaru ikut aman.',bk_now:'Simpan cadangan sekarang',ce_date:'Tanggal keluar tidak boleh sebelum tanggal masuk.',ts_update:'Versi baru terpasang. Tutup lalu buka lagi aplikasi untuk memakainya.',lv_off:'Harga real-time Binance mati. Nyalakan di Aturan → Pengaturan.',lv_nopair:'Isi koin untuk melihat harga Binance.',lv_badpair:'Nama koin ini tidak bisa dicari di Binance {m}. Contoh: BTC atau BTC/USDT.',lv_conn:'Menyambung ke Binance…',lv_nodata:'Belum ada data {s} dari Binance {m}. Cek nama koinnya.',lv_offline:'Tidak ada internet. Harga diisi manual.',lv_down:'Tidak bisa terhubung ke Binance. Mencoba lagi…',lv_needkurs:'Harga Rupiah butuh kurs USDT. Isi di Hitung → Futures → Kurs.',lv_px:'{s} {m}: ',lv_ago:'{n} dtk lalu',lv_now:'baru saja',lv_mark:'mark {p} · funding {r}',lv_pay:'posisi ini bayar ≈{m}/periode',lv_get:'posisi ini terima ≈{m}/periode',lv_next:'berikutnya {t}',lv_use:'Pakai harga ini',lv_use_k:'Pakai harga Binance',lv_j_ok:'Harga Binance live untuk {n} posisi terbuka.',lv_j_part:'Harga Binance live untuk {n} dari {t} posisi. Tanpa data: {s}.',t_now:'Harga sekarang',t_upnl:'P/L jika ditutup sekarang',t_markpx:'Mark price',t_fundnow:'Funding sekarang',t_toliq:'{p} ke likuidasi',lv_slhit:'Kena SL',lv_slnear:'Dekat SL',lv_tphit:'Target tercapai',lv_liqnear:'Dekat likuidasi',lv_liqhit:'Lewat likuidasi',b_upnl:'P/L berjalan',b_upnl_h:'{n} posisi, jika ditutup sekarang',b_upnl_none:'tidak ada posisi terbuka',b_eqlive:'Saldo + P/L berjalan',b_eqlive_h:'pakai harga Binance live',set_live:'Ambil harga real-time dari Binance',set_order:'Jenis order yang biasa dipakai',ord_taker:'Market order (taker)',ord_maker:'Limit order (maker)',set_bnb:'Bayar fee pakai BNB',set_applyopen:'Terapkan juga ke posisi yang masih terbuka',btn_bn:'Pakai tarif Binance',set_bn_note:'Tarif Regular User: spot 0,1% (0,075% bila bayar dengan BNB), futures USDⓈ-M maker 0,02% / taker 0,05% (diskon BNB 10%). Penjualan di platform luar negeri kena PPh final 1%. Tarif bisa berubah, cek tabel fee di aplikasi Binance. Aplikasi hanya mengirim nama koin ke Binance, bukan data jurnalmu.',ts_bn:'Tarif Binance dipakai: spot {s}, futures {f}, pajak jual 1%.',store_check:'Memeriksa penyimpanan…',
 disclaimer:'Halaman ini alat bantu disiplin, bukan saran keuangan. Kripto sangat fluktuatif, dan futures bisa menghabiskan margin dalam hitungan menit. Gunakan uang yang siap hilang.',
 se_check:'Periksa isian: {f}.',se_risk:'Risiko per trade di atas 5% terlalu besar untuk modal kecil. Pakai 0,5–2%.',se_pct:'Persentase modal dan margin tidak bisa lebih dari 100%.',se_mmr:'Maintenance margin biasanya di bawah 1%. Cek angka di exchange-mu.',
 cur_h:'Ganti mata uang akun?',cur_d:'Modal awal dan semua angka di jurnal (nilai posisi, margin, risiko, P/L, funding) akan dikonversi dari {a} ke {b} dengan kurs di bawah. Harga koin tidak diubah.',cur_rate:'Kurs 1 USDT (Rp)',cur_yes:'Konversi & simpan',cur_err:'Isi kurs USDT dalam rupiah, mis. 16.300.',cur_prev:'Modal awal {a} → {b}',
@@ -140,7 +140,7 @@ tbl_fut_h:'Futures: position size, leverage and margin',tbl_fut_n:'Leverage show
 set_sum:'Capital, limits & fees',set_cur:'Account currency',set_modal:'Starting capital ({c})',set_risk:'Risk per trade (%)',set_minrr:'Minimum R:R (1:x)',set_day:'Daily loss limit (%)',set_week:'Weekly loss limit (%)',set_dd:'Drawdown limit (%)',set_maxopen:'Max open positions',set_maxtrades:'Max trades per day',set_streak:'Stop after losing streak',set_maxpos:'Max size per position (%)',set_feebuy:'Buy fee (%)',set_feesell:'Sell fee (%)',set_tax:'Tax on sell (%)',set_futcap:'Futures capital share (%)',set_futmargin:'Max margin per position (% of futures capital)',set_maxlev:'Max leverage (x)',set_mmr:'Maintenance margin (%)',set_futfee:'Futures fee per side (%)',set_futtax:'Futures tax (%)',
 set_note:'Spot and futures fees differ by exchange. Check its fee table (maker is usually cheaper than taker). Futures fees are charged on position size, not margin. Set futures tax to 0 if your exchange does not charge it; spot tax on licensed Indonesian exchanges is 0.21%.',
 set_save:'Save settings',set_reset:'Reset limits to default',csv:'Export journal to CSV',store_db:'Saved to your Claude account, so the same journal opens on any phone or laptop.',store_local:'Data is stored on this phone and works without internet. Save a backup regularly, e.g. every weekend, so nothing is lost if the phone breaks or the app is removed.',
-install:'Install app',backup_export:'Save backup',backup_import:'Restore from backup',imp_h:'Restore from backup?',imp_d:'This backup has {n} trades with starting capital {m}, made {d}. All data on this phone will be replaced.',imp_yes:'Replace data',ts_imp:'Data restored from backup.',ts_imp_bad:'This file is not a Jurnal Kripto 1R backup.',ts_backup:'Backup ready to save.',bk_never:'No backup yet. Your journal is stored only on this phone.',bk_old:'Last backup was {n} days ago. Save a new one so recent trades are safe too.',bk_now:'Save backup now',ce_date:'Exit date cannot be before the entry date.',ts_update:'A new version is installed. Close and reopen the app to use it.',store_check:'Checking storage…',
+install:'Install app',backup_export:'Save backup',backup_import:'Restore from backup',imp_h:'Restore from backup?',imp_d:'This backup has {n} trades with starting capital {m}, made {d}. All data on this phone will be replaced.',imp_yes:'Replace data',ts_imp:'Data restored from backup.',ts_imp_bad:'This file is not a Jurnal Kripto 1R backup.',ts_backup:'Backup ready to save.',bk_never:'No backup yet. Your journal is stored only on this phone.',bk_old:'Last backup was {n} days ago. Save a new one so recent trades are safe too.',bk_now:'Save backup now',ce_date:'Exit date cannot be before the entry date.',ts_update:'A new version is installed. Close and reopen the app to use it.',lv_off:'Live Binance prices are off. Turn them on in Rules → Settings.',lv_nopair:'Enter a coin to see the Binance price.',lv_badpair:'This coin name cannot be looked up on Binance {m}. Example: BTC or BTC/USDT.',lv_conn:'Connecting to Binance…',lv_nodata:'No {s} data from Binance {m} yet. Check the coin name.',lv_offline:'No internet. Enter prices manually.',lv_down:'Cannot reach Binance. Retrying…',lv_needkurs:'IDR prices need the USDT rate. Enter it in Calculate → Futures → Rate.',lv_px:'{s} {m}: ',lv_ago:'{n}s ago',lv_now:'just now',lv_mark:'mark {p} · funding {r}',lv_pay:'this position pays ≈{m}/period',lv_get:'this position receives ≈{m}/period',lv_next:'next {t}',lv_use:'Use this price',lv_use_k:'Use Binance price',lv_j_ok:'Live Binance prices for {n} open positions.',lv_j_part:'Live Binance prices for {n} of {t} positions. No data: {s}.',t_now:'Current price',t_upnl:'P/L if closed now',t_markpx:'Mark price',t_fundnow:'Funding now',t_toliq:'{p} to liquidation',lv_slhit:'SL hit',lv_slnear:'Near SL',lv_tphit:'Target hit',lv_liqnear:'Near liquidation',lv_liqhit:'Past liquidation',b_upnl:'Open P/L',b_upnl_h:'{n} positions, if closed now',b_upnl_none:'no open positions',b_eqlive:'Balance + open P/L',b_eqlive_h:'using live Binance prices',set_live:'Fetch live prices from Binance',set_order:'Order type you usually use',ord_taker:'Market order (taker)',ord_maker:'Limit order (maker)',set_bnb:'Pay fees with BNB',set_applyopen:'Also apply to open positions',btn_bn:'Use Binance fees',set_bn_note:'Regular User rates: spot 0.1% (0.075% when paying with BNB), USDⓈ-M futures maker 0.02% / taker 0.05% (10% BNB discount). Sales on foreign platforms carry a 1% final income tax in Indonesia. Rates can change; check the fee table in the Binance app. The app only sends coin names to Binance, never your journal data.',ts_bn:'Binance fees applied: spot {s}, futures {f}, sell tax 1%.',store_check:'Checking storage…',
 disclaimer:'This page is a discipline tool, not financial advice. Crypto is very volatile, and futures can wipe out margin within minutes. Only use money you can afford to lose.',
 se_check:'Check these fields: {f}.',se_risk:'Risk above 5% per trade is too much for a small account. Use 0.5–2%.',se_pct:'Capital and margin percentages cannot exceed 100%.',se_mmr:'Maintenance margin is usually below 1%. Check your exchange.',
 cur_h:'Change account currency?',cur_d:'Starting capital and every amount in the journal (position size, margin, risk, P/L, funding) will be converted from {a} to {b} at the rate below. Coin prices stay as they are.',cur_rate:'1 USDT rate (IDR)',cur_yes:'Convert & save',cur_err:'Enter the USDT rate in rupiah, e.g. 16,300.',cur_prev:'Starting capital {a} → {b}',
@@ -329,6 +329,191 @@ function setLang(l,save){
   if(save&&S.mode!=='loading'&&!S.readOnly&&S.settings.lang!==l)putSettings(Object.assign({},S.settings,{lang:l}));
 }
 
+/* ---------- Harga real-time Binance (stream publik, tanpa API key; hanya nama koin yang dikirim) ---------- */
+var LIVE_URL={spot:['wss://data-stream.binance.vision/stream?streams=','wss://stream.binance.com:9443/stream?streams='],
+  futures:['wss://fstream.binance.com/market/stream?streams=']};
+function liveCh(m){return {m:m,key:'',ws:null,state:'off',retry:0,host:0,timer:null,openedAt:0}}
+var LIVE={px:Object.create(null),ch:{pos_spot:liveCh('spot'),pos_fut:liveCh('futures'),calc:liveCh('spot')},syncT:null};
+function liveOn(){return !!S.settings.liveOn}
+function mName(m){return m==='futures'?'Futures':'Spot'}
+// "ZEC", "zec/usdt", "BTCUSDT", "BTC/IDR" -> simbol Binance. Pair Rupiah memakai harga USDT x kurs.
+function symOf(pair,m){
+  var s=String(pair||'').toUpperCase().replace(/\s+/g,'');if(!s)return null;
+  var base=s,quote='',mm=s.match(/^([A-Z0-9]+)[\/\-_:]([A-Z0-9]+)$/);
+  if(mm){base=mm[1];quote=mm[2]}
+  else ['USDT','USDC','FDUSD','IDR'].some(function(q){if(s.length>q.length+1&&s.slice(-q.length)===q){base=s.slice(0,-q.length);quote=q;return true}return false});
+  if(!/^[A-Z0-9]{2,15}$/.test(base))return null;
+  var conv=quote==='IDR'?'IDR':null;if(!quote||quote==='IDR')quote='USDT';
+  if(['USDT','USDC','FDUSD','BTC','ETH','BNB'].indexOf(quote)<0)return null;
+  if(m==='futures'&&quote!=='USDT'&&quote!=='USDC')return null;
+  return {sym:base+quote,conv:conv};
+}
+function liveWanted(){
+  var w={pos_spot:{},pos_fut:{},calc:{}},cm=calcMarket();
+  LIVE.ch.calc.m=cm;
+  if(!liveOn()||document.visibilityState==='hidden'||navigator.onLine===false)return w;
+  S.trades.forEach(function(tr){if(tr.status!=='open')return;var f=isFut(tr),s=symOf(tr.pair,f?'futures':'spot');if(s)w[f?'pos_fut':'pos_spot'][s.sym]=1});
+  if(S.tab==='hitung'){var cs=symOf($('#c-pair').value,cm);if(cs)w.calc[cs.sym]=1}
+  return w;
+}
+function liveSync(){clearTimeout(LIVE.syncT);LIVE.syncT=setTimeout(liveApply,350)}
+function liveApply(){
+  var w=liveWanted();
+  Object.keys(LIVE.ch).forEach(function(name){
+    var c=LIVE.ch[name],syms=Object.keys(w[name]).sort().slice(0,40),key=syms.length?c.m+'|'+syms.join(','):'';
+    if(key===c.key&&(c.ws||c.timer||!key))return;
+    liveClose(c);c.key=key;c.retry=0;c.host=0;c.state=key?'conn':'off';
+    if(key)liveOpen(c);
+  });
+  updateLiveDom();
+}
+function liveStreams(c){
+  return c.key.split('|')[1].split(',').map(function(s){s=s.toLowerCase();return c.m==='futures'?s+'@markPrice@1s/'+s+'@miniTicker':s+'@miniTicker'}).join('/');
+}
+function liveOpen(c){
+  var urls=LIVE_URL[c.m],ws,got=false;
+  c.state='conn';c.openedAt=Date.now();
+  try{ws=new WebSocket(urls[c.host%urls.length]+liveStreams(c))}catch(e){c.state='down';liveRetry(c,true);return}
+  c.ws=ws;
+  ws.onmessage=function(ev){
+    var d;try{d=JSON.parse(ev.data)}catch(e){return}
+    d=d&&d.data?d.data:d;if(!d||typeof d.s!=='string'||!/^[A-Z0-9]{2,30}$/.test(d.s))return;
+    var k=c.m+':'+d.s,o=LIVE.px[k]||(LIVE.px[k]={});
+    if(d.e==='24hrMiniTicker'){var cp=+d.c;if(!(cp>0))return;o.c=cp}
+    else if(d.e==='markPriceUpdate'){var p=+d.p,r=+d.r,T=+d.T;if(!(p>0))return;o.p=p;if(isFinite(r))o.r=r;if(T>0)o.T=T}
+    else return;
+    o.at=Date.now();got=true;c.state='ok';c.retry=0;
+  };
+  ws.onclose=function(){if(c.ws!==ws)return;c.ws=null;c.state='down';if(c.key)liveRetry(c,!got)};
+}
+function liveRetry(c,switchHost){
+  clearTimeout(c.timer);if(switchHost)c.host++;
+  var delay=[2000,5000,10000,20000][c.retry]||30000;c.retry++;
+  c.timer=setTimeout(function(){c.timer=null;if(c.key&&!c.ws)liveOpen(c)},delay);
+}
+function liveClose(c){clearTimeout(c.timer);c.timer=null;var ws=c.ws;c.ws=null;if(ws){try{ws.close()}catch(e){}}}
+function liveInfo(m,pair,idr,chName){
+  if(!liveOn())return {st:'off'};
+  var s=symOf(pair,m);if(!s)return {st:'bad'};
+  var o=LIVE.px[m+':'+s.sym],now=Date.now();
+  if(o&&o.at&&now-o.at<90000&&(o.c>0||o.p>0)){
+    var f=1;if(idr||s.conv==='IDR'){var k=readKurs();if(!(k>0))return {st:'needkurs',sym:s.sym};f=k}
+    return {st:'ok',sym:s.sym,last:(o.c||o.p)*f,mark:(o.p||o.c)*f,r:o.r,T:o.T,age:Math.max(0,Math.round((now-o.at)/1000)),idr:f!==1};
+  }
+  if(navigator.onLine===false)return {st:'offline',sym:s.sym};
+  var c=LIVE.ch[chName];
+  if(c&&c.state==='down')return {st:'down',sym:s.sym};
+  if(c&&c.key&&c.openedAt&&now-c.openedAt>10000)return {st:'nodata',sym:s.sym};
+  return {st:'conn',sym:s.sym};
+}
+function liveMsg(i,m){
+  return i.st==='off'?t('lv_off'):i.st==='bad'?t('lv_badpair',{m:mName(m)}):i.st==='needkurs'?t('lv_needkurs'):i.st==='offline'?t('lv_offline'):
+    i.st==='down'?t('lv_down'):i.st==='nodata'?t('lv_nodata',{s:i.sym,m:mName(m)}):t('lv_conn');
+}
+function agoTxt(n){return n<2?t('lv_now'):t('lv_ago',{n:n})}
+function fmtLivePx(p,idr){return idr?'Rp'+fmtNum(Math.round(p),0):fmtNum(p)}
+function fmtRate(r){return isFinite(r)?(r>0?'+':r<0?'−':'')+fmtNum(Math.abs(r*100),4,4)+'%':'—'}
+function fmtTime(T){return T>0?new Date(T).toLocaleTimeString(LOC(),{hour:'2-digit',minute:'2-digit'}):'—'}
+function calcPxIDR(){return calcMarket()==='spot'&&cur()==='IDR'}
+// SL/TP dibandingkan dengan harga terakhir; likuidasi dengan mark price (seperti di Binance).
+function liveAlert(tr,i){
+  var sh=(tr.side||'long')==='short',last=i.last,mark=i.mark,d=Math.abs(tr.entry-tr.sl);
+  if(isFut(tr)&&tr.liq>0&&(sh?mark>=tr.liq:mark<=tr.liq))return ['bad','lv_liqhit'];
+  if(sh?last>=tr.sl:last<=tr.sl)return ['bad','lv_slhit'];
+  if(isFut(tr)&&tr.liq>0){var full=Math.abs(tr.liq-tr.entry),left=sh?tr.liq-mark:mark-tr.liq;if(full>0&&left<=0.5*full)return ['bad','lv_liqnear']}
+  if(tr.tp&&(sh?last<=tr.tp:last>=tr.tp))return ['good','lv_tphit'];
+  if(Math.abs(last-tr.sl)<=0.25*d)return ['warn','lv_slnear'];
+  return null;
+}
+function setLiveBox(box,txt,st,h){if(!box)return;box.setAttribute('data-st',st);if(txt.innerHTML!==h)txt.innerHTML=h}
+function updateLiveDom(){
+  // Kalkulator
+  var cm=calcMarket(),pair=$('#c-pair').value,cbox=$('#c-livebox');
+  if(cbox){
+    var ci=pair.trim()?liveInfo(cm,pair,calcPxIDR(),'calc'):(liveOn()?{st:'idle'}:{st:'off'}),h;
+    if(ci.st==='ok'){
+      h=esc(t('lv_px',{s:ci.sym,m:mName(cm)}))+'<b>'+esc(fmtLivePx(ci.last,ci.idr))+'</b> · '+esc(agoTxt(ci.age));
+      if(cm==='futures'){
+        h+='<br>'+esc(t('lv_mark',{p:fmtLivePx(ci.mark,ci.idr),r:fmtRate(ci.r)}));
+        var cv=calcValues();
+        if(!cv.err&&cv.size>0&&isFinite(ci.r)){var pay=(cv.side==='short'?-1:1)*cv.size*ci.r;h+=' · '+esc(t(pay>=0?'lv_pay':'lv_get',{m:money(Math.abs(pay))}))}
+        if(ci.T)h+=' · '+esc(t('lv_next',{t:fmtTime(ci.T)}));
+      }
+    }else h=esc(ci.st==='idle'?t('lv_nopair'):liveMsg(ci,cm));
+    setLiveBox(cbox,$('#c-live-txt'),ci.st,h);
+    $('#c-live-use').hidden=ci.st!=='ok';S.calcLive=ci.st==='ok'?ci.last:null;
+  }
+  // Posisi terbuka
+  var open=S.trades.filter(function(x){return x.status==='open'}),nOk=0,miss=[],upnl=0,first=null;
+  open.forEach(function(tr){
+    var f=isFut(tr),m=f?'futures':'spot',i=liveInfo(m,tr.pair,!f&&pxIDR(tr),f?'pos_fut':'pos_spot');
+    var rEl=document.querySelector('[data-lv-r="'+tr.id+'"]'),tag=document.querySelector('[data-lv-tag="'+tr.id+'"]'),dEl=document.querySelector('[data-lv-d="'+tr.id+'"]');
+    if(i.st==='ok'){
+      nOk++;var pnl=tradePnl(tr,i.last,0),R=tr.riskRp>0?pnl/tr.riskRp:null;upnl+=pnl;
+      if(rEl){rEl.textContent=moneyS(pnl)+(R!==null?' · '+rMul(R):'');rEl.className='t-r live '+(pnl>0?'up':pnl<0?'down':'')}
+      var al=liveAlert(tr,i);
+      if(tag){tag.hidden=!al;if(al){tag.className='tag '+al[0];tag.textContent=t(al[1])}}
+      if(dEl){
+        var cells=cell(t('t_now'),esc(px(tr,i.last)),agoTxt(i.age))+cell(t('t_upnl'),plSpan(pnl),R!==null?rMul(R):'');
+        if(f){
+          var toLiq=tr.liq>0?Math.abs(i.mark-tr.liq)/i.mark*100:null,fp=isFinite(i.r)?((tr.side==='short'?-1:1)*tr.size*i.r):null;
+          cells+=cell(t('t_markpx'),esc(px(tr,i.mark)),toLiq!==null?t('t_toliq',{p:pct(toLiq)}):'')+
+            cell(t('t_fundnow'),esc(fmtRate(i.r)),(fp===null?'':t(fp>=0?'lv_pay':'lv_get',{m:money(Math.abs(fp))}))+(i.T?' · '+t('lv_next',{t:fmtTime(i.T)}):''));
+        }
+        if(dEl.innerHTML!==cells)dEl.innerHTML=cells;dEl.hidden=false;
+      }
+    }else{
+      miss.push(tr.pair);if(!first)first=[i,m];
+      if(rEl){rEl.textContent=t('t_risk',{m:money(tr.riskRp)});rEl.className='t-r'}
+      if(tag)tag.hidden=true;if(dEl)dEl.hidden=true;
+    }
+  });
+  var jb=$('#j-livebox');
+  if(jb){
+    jb.hidden=!open.length||!liveOn();
+    if(open.length){
+      if(nOk===open.length)setLiveBox(jb,$('#j-live-txt'),'ok',esc(t('lv_j_ok',{n:nOk})));
+      else if(nOk>0)setLiveBox(jb,$('#j-live-txt'),'conn',esc(t('lv_j_part',{n:nOk,t:open.length,s:miss.join(', ')})));
+      else setLiveBox(jb,$('#j-live-txt'),first[0].st,esc(liveMsg(first[0],first[1])));
+    }
+  }
+  var ue=$('#lv-upnl'),uh=$('#lv-upnl-h'),ee=$('#lv-eq');
+  if(ue){
+    if(!open.length){ue.textContent='—';uh.textContent=t('b_upnl_none');ee.textContent='—'}
+    else if(!nOk){ue.textContent='—';uh.textContent=first?liveMsg(first[0],first[1]):'';ee.textContent='—'}
+    else{var ph=plSpan(upnl);if(ue.innerHTML!==ph)ue.innerHTML=ph;uh.textContent=t('b_upnl_h',{n:nOk});ee.textContent=money(stats().eq+upnl)}
+  }
+  // Lembar tutup posisi
+  var kb=$('#k-livebox');
+  if(kb&&!$('#sheet-close').hidden){
+    var tr2=S.closingId?findTrade(S.closingId):null;
+    if(tr2){
+      var f2=isFut(tr2),m2=f2?'futures':'spot',ki=liveInfo(m2,tr2.pair,!f2&&pxIDR(tr2),f2?'pos_fut':'pos_spot');
+      kb.hidden=ki.st==='off';
+      setLiveBox(kb,$('#k-live-txt'),ki.st,ki.st==='ok'?esc(t('lv_px',{s:ki.sym,m:mName(m2)}))+'<b>'+esc(px(tr2,ki.last))+'</b> · '+esc(agoTxt(ki.age)):esc(liveMsg(ki,m2)));
+      $('#k-live-use').hidden=ki.st!=='ok';S.closeLive=ki.st==='ok'?ki.last:null;
+    }
+  }
+}
+// Tarif resmi Binance (Regular User) + PPh final 1% untuk penjualan di platform luar negeri.
+function applyBinanceFees(){
+  loadLocal();
+  var bnb=$('#s-bnb').checked,maker=$('#s-order').value==='maker';
+  var spot=bnb?0.075:0.1,fut=Math.round((maker?0.02:0.05)*(bnb?0.9:1)*10000)/10000;
+  S.settings=cleanSettings(Object.assign({},S.settings,{feeBuy:spot,feeSell:spot,tax:1,futFee:fut,bnb:bnb?1:0,makerOrder:maker?1:0,lang:S.lang}));
+  if($('#s-applyopen').checked){
+    var s=S.settings;
+    S.trades=S.trades.map(function(tr){
+      if(tr.status!=='open')return tr;
+      var n=Object.assign({},tr,{fees:{feeBuy:s.feeBuy,feeSell:s.feeSell,tax:s.tax,futFee:s.futFee,futTax:s.futTax,mmr:s.mmr}});
+      n.riskRp=Math.max(0,-pnlX(n.market||'spot',n.side||'long',n.entry,n.sl,n.size,feesOf(n.fees),0));
+      return n;
+    });
+  }
+  saveLocal();S.setDirty=false;render();
+  toast(t('ts_bn',{s:pct(spot,3),f:pct(fut,3)}));
+}
+
 /* ---------- Render ---------- */
 function render(){
   var st=stats(),sts=statusOf(st);
@@ -337,6 +522,7 @@ function render(){
   if(!S.setDirty)fillSettings();
   $('#store-mode').textContent=S.mode==='local'?t('store_local'):t('store_check');
   renderBackupNote();
+  updateLiveDom();liveSync();
 }
 function renderBackupNote(){
   var el=$('#s-backup'),last=0;try{last=+localStorage.getItem(LS_BK)||0}catch(e){}
@@ -368,7 +554,9 @@ function renderSummary(st,sts){
     cell(t('b_day'),money(st.dayLimit),t('approx_r',{r:fmtNum(s.dayPct/s.riskPct,1)}))+
     cell(t('b_week'),money(st.weekLimit),t('approx_r',{r:fmtNum(s.weekPct/s.riskPct,1)}))+
     cell(t('b_futcap'),money(st.futCap),t('futcap_h',{p:pct(s.futCapPct,0),m:money(st.openMargin)}))+
-    cell(t('b_maxmargin'),money(st.maxMargin),t('maxmargin_h',{l:fmtNum(s.maxLev,0)}));
+    cell(t('b_maxmargin'),money(st.maxMargin),t('maxmargin_h',{l:fmtNum(s.maxLev,0)}))+
+    '<div><span class="k">'+esc(t('b_upnl'))+'</span><span class="v" id="lv-upnl">—</span><span class="h" id="lv-upnl-h"></span></div>'+
+    '<div><span class="k">'+esc(t('b_eqlive'))+'</span><span class="v" id="lv-eq">—</span><span class="h">'+esc(t('b_eqlive_h'))+'</span></div>';
   $('#m-day').innerHTML=meterHTML(t('m_day'),Math.max(0,-st.todayPnl),st.dayLimit,s.dayPct/s.riskPct,st.todayPnl);
   $('#m-week').innerHTML=meterHTML(t('m_week'),Math.max(0,-st.weekPnl),st.weekLimit,s.weekPct/s.riskPct,st.weekPnl);
   $('#s-counters').innerHTML=counter(st.tradesToday,s.maxTrades,t('c_today'))+counter(st.open.length,s.maxOpen,t('c_open'))+counter(st.streak,s.maxStreak,t('c_streak'));
@@ -418,7 +606,7 @@ function violText(x){
 function tradeHTML(tr){
   var closed=tr.status==='closed',open=!!S.openIds[tr.id],fut=isFut(tr),side=tr.side||'long';
   var right=closed?'<span class="t-pnl '+(tr.pnl>0?'up':tr.pnl<0?'down':'')+'">'+moneyS(tr.pnl)+'</span><span class="t-r">'+(tr.rMult!==null&&isFinite(tr.rMult)?rMul(tr.rMult):'')+'</span>'
-    :'<span class="tag open">'+esc(t('t_open'))+'</span><span class="t-r">'+esc(t('t_risk',{m:money(tr.riskRp)}))+'</span>';
+    :'<span class="tag open">'+esc(t('t_open'))+'</span><span class="t-r" data-lv-r="'+esc(tr.id)+'">'+esc(t('t_risk',{m:money(tr.riskRp)}))+'</span>';
   var sub=fmtDate(closed?tr.closedAt:tr.openedAt)+' · '+(fut?'Futures':'Spot')+' · '+esc(trSetup(tr.setup||''));
   var broken=(tr.rulesBroken||[]).length;
   var slPct=slDist(side,tr.entry,tr.sl)*100,slSign=side==='short'?'+':'−';
@@ -441,13 +629,13 @@ function tradeHTML(tr){
       cell(t('t_target'),tr.tp?px(tr,tr.tp):'—',tgtTxt)+
       cell(t('t_emo'),esc(trEmo(tr.emosi||'—')),'');
   }
-  var body='<div class="ledger">'+cells+'</div>';
+  var body=(closed?'':'<div class="ledger" data-lv-d="'+esc(tr.id)+'" hidden></div>')+'<div class="ledger">'+cells+'</div>';
   if(broken)body+='<div class="t-text"><span class="eyebrow">'+esc(t('t_broken'))+'</span><p>'+tr.rulesBroken.map(function(v){return esc(violText(v))}).join(' · ')+'</p></div>';
   if(tr.note)body+='<div class="t-text"><span class="eyebrow">'+esc(t('t_reason'))+'</span><p>'+esc(tr.note)+'</p></div>';
   if(tr.lesson)body+='<div class="t-text"><span class="eyebrow">'+esc(t('t_lesson'))+'</span><p>'+esc(tr.lesson)+'</p></div>';
   body+='<div class="t-actions">'+(closed?'':'<button class="btn btn-primary btn-sm" type="button" data-close-trade="'+esc(tr.id)+'">'+esc(t('t_close'))+'</button>')+
     '<button class="btn btn-ghost btn-sm" type="button" data-del="'+esc(tr.id)+'">'+esc(t('t_del'))+'</button></div>';
-  return '<details class="trade" data-id="'+esc(tr.id)+'"'+(open?' open':'')+'><summary><div class="t-main"><span class="t-pair">'+esc(tr.pair)+sideTag(tr)+(broken?'<span class="tag flag">'+esc(t('t_rules',{n:broken}))+'</span>':'')+'</span><span class="t-sub">'+sub+'</span></div><div class="t-res">'+right+'</div></summary><div class="t-body">'+body+'</div></details>';
+  return '<details class="trade" data-id="'+esc(tr.id)+'"'+(open?' open':'')+'><summary><div class="t-main"><span class="t-pair">'+esc(tr.pair)+sideTag(tr)+(closed?'':'<span class="tag" data-lv-tag="'+esc(tr.id)+'" hidden></span>')+(broken?'<span class="tag flag">'+esc(t('t_rules',{n:broken}))+'</span>':'')+'</span><span class="t-sub">'+sub+'</span></div><div class="t-res">'+right+'</div></summary><div class="t-body">'+body+'</div></details>';
 }
 function renderJournal(st){
   var open=st.open.slice().sort(function(a,b){return (b.createdTs||0)-(a.createdTs||0)}),closed=st.closed.slice().reverse();
@@ -573,6 +761,7 @@ var SET_MAP=[['s-modal','modalAwal',0],['s-risk','riskPct',2],['s-minrr','minRR'
 var ZERO_OK=/^(feeBuy|feeSell|tax|futFee|futTax|mmr|futCapPct)$/;
 function fillSettings(){
   $('#s-cur').value=cur();
+  $('#s-live').checked=!!S.settings.liveOn;$('#s-bnb').checked=!!S.settings.bnb;$('#s-order').value=S.settings.makerOrder?'maker':'taker';
   SET_MAP.forEach(function(m){var el=$('#'+m[0]);if(document.activeElement!==el)setNum(el,S.settings[m[1]],m[1]==='modalAwal'&&cur()==='USDT'?2:m[2])});
 }
 function readSettings(){
@@ -589,7 +778,7 @@ function readSettings(){
 /* ---------- Pembersih data: semua isi cadangan & penyimpanan diperiksa sebelum dipakai ---------- */
 var SET_SPEC={modalAwal:[1e-6,1e15],riskPct:[0.01,100],dayPct:[0.01,100],weekPct:[0.01,100],ddPct:[0.01,100],maxPosPct:[0.01,100],
   maxOpen:[1,1000,1],maxTrades:[1,1000,1],maxStreak:[1,1000,1],feeBuy:[0,100],feeSell:[0,100],tax:[0,100],minRR:[0.01,1000],
-  futCapPct:[0,100],futMarginPct:[0.01,100],maxLev:[1,1000,1],mmr:[0,100],futFee:[0,100],futTax:[0,100]};
+  futCapPct:[0,100],futMarginPct:[0.01,100],maxLev:[1,1000,1],mmr:[0,100],futFee:[0,100],futTax:[0,100],liveOn:[0,1,1],bnb:[0,1,1],makerOrder:[0,1,1]};
 var SETUPS=['Breakout','Pullback / retest','Pantulan support','Penolakan resistance','Ikut tren','Berita / katalis','Lainnya'];
 var EMOS=['Tenang','Ragu','FOMO','Takut','Balas dendam'];
 var VIOL_KEYS=['status','trades','open','risk','lev','liq','margin','futcap','cross','size','notp','rr','emo'];
@@ -709,6 +898,7 @@ function setTab(name){
   S.tab=name;
   ['ringkasan','hitung','jurnal','aturan'].forEach(function(n){$('#tab-'+n).hidden=n!==name;$('#t-'+n).setAttribute('aria-selected',String(n===name))});
   window.scrollTo(0,0);
+  liveSync();updateLiveDom();
 }
 var lastFocus=null;
 function openSheet(id){lastFocus=document.activeElement;var el=$('#'+id);el.hidden=false;var f=el.querySelector('input:not([type="radio"]),select,textarea,button:not(.x)');if(f)setTimeout(function(){if(!el.contains(document.activeElement))f.focus()},30)}
@@ -788,7 +978,7 @@ function openClose(id){
   var tr=findTrade(id);if(!tr)return;S.closingId=id;var fut=isFut(tr);
   $('#close-info').textContent=(fut?t('ci_fut',{pair:tr.pair,side:tr.side==='short'?'Short':'Long',l:fmtNum(tr.lev,1),e:px(tr,tr.entry),m:money(tr.size)}):t('ci_spot',{pair:tr.pair,e:px(tr,tr.entry),m:money(tr.size)}))+t('ci_sl',{p:px(tr,tr.sl)})+(tr.tp?t('ci_tp',{p:px(tr,tr.tp)}):'');
   $('#k-exit').value='';$('#k-date').value=ymd(new Date());$('#k-lesson').value='';$('#k-funding').value='';$('#close-err').hidden=true;
-  applyMarketUI('k');updateClosePreview();openSheet('sheet-close');
+  applyMarketUI('k');updateClosePreview();openSheet('sheet-close');updateLiveDom();
 }
 function closeFunding(tr){if(!isFut(tr))return 0;var f=numOf('#k-funding');return isFinite(f)?f:0}
 function updateClosePreview(){
@@ -848,6 +1038,8 @@ $('#calc-form').addEventListener('input',function(e){
   if(e.target.name==='c-market')applyMarketUI('c');
   if(e.target.type!=='radio')$('#c-example').hidden=true;
   renderCalc();
+  if(e.target.id==='c-pair'||e.target.name==='c-market')liveSync();
+  updateLiveDom();
 });
 $('#calc-form').addEventListener('submit',function(e){e.preventDefault()});
 $('#add-form').addEventListener('input',function(e){if(e.target.name==='a-market')applyMarketUI('a');updateAddPreview()});
@@ -861,8 +1053,8 @@ $('#cur-form').addEventListener('submit',function(e){
   if(!(r>0)){err.textContent=t('cur_err');err.hidden=false;return}
   convertAll(pc.to,r,pc.vals).then(function(ok){if(ok){S.setDirty=false;S.pendingCur=null;closeSheet('sheet-cur');fillSettings();render();toast(t('ts_cur',{c:pc.to}))}});
 });
-$('#set-form').addEventListener('input',function(){S.setDirty=true;$('#set-err').hidden=true});
-$('#set-form').addEventListener('change',function(){S.setDirty=true});
+$('#set-form').addEventListener('input',function(e){if(e.target.closest('[data-nodirty]'))return;S.setDirty=true;$('#set-err').hidden=true});
+$('#set-form').addEventListener('change',function(e){if(e.target.closest('[data-nodirty]'))return;S.setDirty=true});
 $('#set-form').addEventListener('submit',function(e){
   e.preventDefault();var r=readSettings(),err=$('#set-err');
   if(r.err){err.textContent=r.err;err.hidden=false;return}
@@ -957,5 +1149,14 @@ setLang(startLang,false);
   document.addEventListener('click',function(e){if(e.target.closest('#btn-restore,[data-restore]')){var f=$('#restore-file');f.value='';f.click()}});
   $('#restore-file').addEventListener('change',function(e){var f=e.target.files&&e.target.files[0];if(f)readBackup(f)});
   $('#res-yes').addEventListener('click',applyRestore);
+  // Binance
+  $('#s-live').addEventListener('change',function(){putSettings(Object.assign({},S.settings,{liveOn:this.checked?1:0}))});
+  $('#btn-bnpreset').addEventListener('click',applyBinanceFees);
+  $('#c-live-use').addEventListener('click',function(){if(S.calcLive>0){setNum('#c-entry',S.calcLive);$('#c-example').hidden=true;renderCalc();updateLiveDom()}});
+  $('#k-live-use').addEventListener('click',function(){if(S.closeLive>0){setNum('#k-exit',S.closeLive);updateClosePreview()}});
+  document.addEventListener('visibilitychange',liveApply);
+  window.addEventListener('online',liveApply);window.addEventListener('offline',liveApply);
+  setInterval(function(){if(document.visibilityState!=='hidden')updateLiveDom()},1000);
+  liveApply();
 })();
 })();

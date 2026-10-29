@@ -1,6 +1,6 @@
 // Jurnal Kripto 1R: menyimpan file aplikasi di HP agar bisa dibuka tanpa internet.
 // Ganti angka versi setiap kali file aplikasi diperbarui.
-const CACHE = 'jurnal-1r-v2';
+const CACHE = 'jurnal-1r-v3';
 const FILES = [
   './',
   './index.html',

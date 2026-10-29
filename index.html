@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data:; connect-src 'self' wss://data-stream.binance.vision wss://stream.binance.com:9443 wss://fstream.binance.com; manifest-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <title>Jurnal Kripto 1R</title>
 <meta name="description" content="Jurnal trading kripto offline dengan kalkulator ukuran posisi dan aturan risk management.">
@@ -243,6 +243,22 @@ details.settings>summary:focus-visible{outline:2px solid var(--accent);outline-o
 .backup{display:flex;gap:8px;flex-wrap:wrap}
 .bk-note{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap;background:var(--warn-soft);border-color:transparent;font-size:14px}
 .bk-note p{flex:1 1 200px;min-width:0}
+.live-box{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--muted);min-height:24px}
+.live-box .lv-dot{width:8px;height:8px;border-radius:50%;background:var(--line);flex:none}
+.live-box[data-st="ok"] .lv-dot{background:var(--up)}
+.live-box[data-st="conn"] .lv-dot{background:var(--warn)}
+.live-box[data-st="bad"] .lv-dot,.live-box[data-st="down"] .lv-dot,.live-box[data-st="nodata"] .lv-dot,.live-box[data-st="offline"] .lv-dot,.live-box[data-st="needkurs"] .lv-dot{background:var(--down)}
+.live-box .txt{flex:1 1 180px;min-width:0;overflow-wrap:anywhere;line-height:1.45}
+.live-box .txt b{color:var(--ink);font-family:var(--f-num);font-weight:600}
+.live-box .btn{min-height:34px;padding:0 12px;font-size:13.5px}
+@media (prefers-reduced-motion: no-preference){.live-box[data-st="ok"] .lv-dot{animation:lvpulse 2s ease-in-out infinite}}
+@keyframes lvpulse{50%{opacity:.35}}
+.tag.bad{background:var(--down-soft);color:var(--down)}
+.tag.good{background:var(--up-soft);color:var(--up)}
+.tag.warn{background:var(--warn-soft);color:var(--warn)}
+.t-r.live{font-weight:600}
+.check{display:flex;gap:10px;align-items:flex-start;font-size:14px;cursor:pointer}
+.check input{width:20px;height:20px;padding:0;margin:1px 0 0;flex:none;accent-color:var(--accent)}
 </style>
 </head>
 <body>
@@ -311,6 +327,7 @@ details.settings>summary:focus-visible{outline:2px solid var(--accent);outline-o
         <label for="c-pair" data-i18n="pair">Koin / pair</label>
         <input id="c-pair" placeholder="mis. BTC/IDR" maxlength="24">
       </div>
+      <div class="live-box" id="c-livebox" data-st="idle" aria-live="polite"><span class="lv-dot" aria-hidden="true"></span><span class="txt" id="c-live-txt"></span><button class="btn btn-ghost" type="button" id="c-live-use" data-i18n="lv_use" hidden>Pakai harga ini</button></div>
       <div class="futbox fut-only-c" hidden>
         <div class="seg" role="radiogroup" data-i18n-aria="side" aria-label="Arah posisi">
           <label class="long"><input type="radio" name="c-side" id="c-s-long" value="long" checked><span data-i18n="long_up">Long (naik)</span></label>
@@ -357,6 +374,7 @@ details.settings>summary:focus-visible{outline:2px solid var(--accent);outline-o
       <h2 data-i18n="j_h">Jurnal trade</h2>
       <button class="btn btn-primary btn-sm" type="button" id="btn-add" data-i18n="j_add">+ Catat trade</button>
     </div>
+    <div class="live-box" id="j-livebox" data-st="idle" hidden><span class="lv-dot" aria-hidden="true"></span><span class="txt" id="j-live-txt"></span></div>
     <div class="stack" id="j-open"></div>
     <div class="stack" id="j-closed"></div>
   </section>
@@ -393,6 +411,15 @@ details.settings>summary:focus-visible{outline:2px solid var(--accent);outline-o
           <div class="field"><label for="s-maxopen" data-i18n="set_maxopen">Maks posisi terbuka</label><input id="s-maxopen" class="num" inputmode="numeric"></div>
           <div class="field"><label for="s-maxtrades" data-i18n="set_maxtrades">Maks trade per hari</label><input id="s-maxtrades" class="num" inputmode="numeric"></div>
           <div class="field"><label for="s-streak" data-i18n="set_streak">Stop setelah loss beruntun</label><input id="s-streak" class="num" inputmode="numeric"></div>
+        </div>
+        <p class="set-sub">Binance</p>
+        <div class="stack" data-nodirty>
+          <label class="check"><input type="checkbox" id="s-live"><span data-i18n="set_live">Ambil harga real-time dari Binance</span></label>
+          <div class="field"><label for="s-order" data-i18n="set_order">Jenis order yang biasa dipakai</label><select id="s-order"><option value="taker" data-i18n="ord_taker">Market order (taker)</option><option value="maker" data-i18n="ord_maker">Limit order (maker)</option></select></div>
+          <label class="check"><input type="checkbox" id="s-bnb"><span data-i18n="set_bnb">Bayar fee pakai BNB</span></label>
+          <label class="check"><input type="checkbox" id="s-applyopen" checked><span data-i18n="set_applyopen">Terapkan juga ke posisi yang masih terbuka</span></label>
+          <div><button class="btn btn-ghost" type="button" id="btn-bnpreset" data-i18n="btn_bn">Pakai tarif Binance</button></div>
+          <p class="note" data-i18n="set_bn_note">Tarif Regular User Binance.</p>
         </div>
         <p class="set-sub">Spot</p>
         <div class="grid2">
@@ -494,6 +521,7 @@ details.settings>summary:focus-visible{outline:2px solid var(--accent);outline-o
   <form class="sheet-panel" id="close-form" autocomplete="off" role="dialog" aria-modal="true" aria-labelledby="close-title">
     <div class="sheet-head"><h2 id="close-title" data-i18n="close_h">Tutup posisi</h2><button class="x" type="button" data-close data-i18n-aria="close" aria-label="Tutup">×</button></div>
     <p class="note" id="close-info"></p>
+    <div class="live-box" id="k-livebox" data-st="idle" hidden><span class="lv-dot" aria-hidden="true"></span><span class="txt" id="k-live-txt"></span><button class="btn btn-ghost" type="button" id="k-live-use" data-i18n="lv_use_k" hidden>Pakai harga Binance</button></div>
     <div class="grid2">
       <div class="field"><label for="k-exit">Harga jual (Rp)</label><input id="k-exit" data-kind="price" class="num numfmt" inputmode="decimal" required></div>
       <div class="field"><label for="k-date">Tanggal jual</label><input id="k-date" type="date" required></div>
